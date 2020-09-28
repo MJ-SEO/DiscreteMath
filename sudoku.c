@@ -115,12 +115,21 @@ main ()
 	fprintf(fp,"; Q7\n") ;
 	fprintf(fp,"(assert (and ") ;
 	for (n = 1 ; n <= 9; n++) {
-		fprintf(fp,"(and ") ;
-		for (i = 1 ; i <= 9 ; i++){ 
-			fprintf(fp,"(or ") ;
-			for(j = 1; j == i; j++){
-				fprintf(fp,"p%d%d%d ", i, j, n);			}
-			fprintf(fp,")");
+		fprintf(fp,"(or ") ;
+		for (i = 1 ; i <= 9 ; i++){ 	
+			fprintf(fp,"p%d%d%d ", i, i, n);
+		}
+		fprintf(fp,")");
+	}
+	fprintf(fp,"))\n");
+	
+	//Q8
+	fprintf(fp,"; Q8\n") ;
+	fprintf(fp,"(assert (and ") ;
+	for (n = 1 ; n <= 9; n++) {
+		fprintf(fp,"(or ") ;
+		for (i = 1 ; i <= 9 ; i++){ 	
+			fprintf(fp,"p%d%d%d ", i, 10-i, n);
 		}
 		fprintf(fp,")");
 	}
