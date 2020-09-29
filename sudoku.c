@@ -1,4 +1,29 @@
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+void sort(int * arr){
+    int i, j;
+    int key;
+ 
+    for(i=1; i<81 ; i++){
+        key = arr[i];
+        
+        for(j=i-1; j>=0; j--){
+        
+            if(arr[j] > key){      
+                arr[j+1] = arr[j];  
+            }else{                  
+                break;
+            }
+        
+        }
+        
+        arr[j+1] = key;        
+    }
+}
+
 
 int
 main ()
@@ -11,6 +36,16 @@ main ()
 		for (j = 1 ; j <= 9 ; j++)
 			for(n=1; n<=9; n++)
 				fprintf(fp,"(declare-const p%d%d%d Bool)\n", i, j, n) ;
+
+	char Q3[9][9];
+
+
+	for(int i=0; i<9; i++){
+                for(int j=0; j<9; j++){
+				scanf("%c ", &Q3[i][j]);	
+		}
+        }
+       
 
 	// Q1
 	fprintf(fp,"; Q1\n") ;
@@ -46,8 +81,22 @@ main ()
 	//Q3
 	fprintf(fp,"; Q3\n") ;
 	fprintf(fp,"(assert (and ") ;
-	fprintf(fp,"(and p123)(and p148)(and p154)(and p249)(and p335)(and p412)(and p425)(and p467)(and p474)(and p488)(and p531)(and p583)(and p627)(and p633)(and p691)(and p724)(and p838)(and p846)(and p879)(and p919) ");
+	for(int i=0; i<9; i++){
+                for(int j=0; j<9; j++){
+                        if(isdigit(Q3[i][j])){
+                               fprintf(fp,"(and p%d%d%d)", i+1,j+1,Q3[i][j]-48);
+			      // printf("[DEBUG] p%d%d%d)", i+1, j+1, Q3[i][j]-48);
+                        }
+                }
+        }
 	fprintf(fp,"))\n") ;
+
+/*	if(v<=16){
+		printf("v:%d\n",v);
+		printf("invalid\n");
+		return 0;
+	}
+*/
 	
 	//Q4
 	fprintf(fp,"; Q4\n") ;
@@ -140,15 +189,48 @@ main ()
 	fclose(fp) ;
 
 	FILE * fin = popen("z3 sudoku", "r") ;
-	char buf[256] ;
+
+	char buf[128] ;
+	char num[128] ;
+	char p[10];
+	
 	fscanf(fin, "%s %s", buf, buf) ;
+
+ 	int store[81];
+	int number;
+	int result[9][9];
+	int k=0;
+	
 	while (!feof(fin)) {
-		fscanf(fin, "%s", buf) ; printf("%s ", buf) ;
-		fscanf(fin, "%s", buf) ; printf("%s ", buf) ;
-		fscanf(fin, "%s", buf) ; printf("%s ", buf) ;
-		fscanf(fin, "%s", buf) ; printf("%s ", buf) ;
-		fscanf(fin, "%s", buf) ; printf("%s\n", buf) ;
+		fscanf(fin, "%s", buf) ; 
+
+		fscanf(fin, "%c %c", p, p);
+			
+		fscanf(fin, "%s", num) ; 
+		number = atoi(num);
+		
+		fscanf(fin, "%s", buf) ; 
+		
+		fscanf(fin, "%s", buf) ; 
+		
+		fscanf(fin, "%s", buf) ;	
+			if(strchr(buf,'t')!=NULL){
+				store[k] = number;
+				k++;
+		}		 
 	}
-	pclose(fin) ;
+
+	sort(store);
+	int nn=0;
+	for(i=0; i<9; i++){
+		for(j=0; j<9; j++){
+			printf("%d ", store[nn]%10);
+			nn++;
+		}
+		printf("\n");
+	}
+	
+	fclose(fin) ;
+
 
 }
