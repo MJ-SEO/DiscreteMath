@@ -39,14 +39,66 @@ main ()
 
 	char Q3[9][9];
 
-
 	for(int i=0; i<9; i++){
                 for(int j=0; j<9; j++){
 				scanf("%c ", &Q3[i][j]);	
 		}
         }
-       
+       	
+	for(i=0; i<9; i++){
+		for(j=0; j<8; j++){
+			for(int k=j+1; k<9; k++){
+				if(Q3[i][j]>=48 && Q3[i][j]<=57){
+					if(Q3[i][j]==Q3[i][k]){
+						printf("Invalid (row)\n");
+						return 0;
+					}
+				}
+			}		
+		}
+	}
+/*
+	for(i=0; i<9; i++){
+		for(j=0; j<8; j++){
+			for(int h=j+1; h<9; h++){
+				if(Q3[i][j]>=48 && Q3[i][j]<=57){
+					if(Q3[j][i]==Q3[h][i]){
+						printf("Invalid (col)\n");
+						return 0;
+					}
+				}
+			}		
+		}
+	}
+	
+	
+	for(i=0; i<9; i++){
+		for(j=0; j<8; j++){
+			for(int k=j+1; k<9; k++){
+				if(Q3[i][j]>=48 && Q3[i][j]<=57){
+					if(Q3[j][i]==Q3[k][i]){
+						printf("Invalid (dia)\n");
+						return 0;
+					}
+				}
+			}		
+		}
+	}
 
+
+	for(i=0; i<9; i++){
+		for(j=0; j<8; j++){
+			for(int k=j+1; k<9; k++){
+				if(Q3[i][j]>=48 && Q3[i][j]<=57){
+					if(Q3[j][i]==Q3[k][i]){
+						printf("Invalid (sub)\n");
+						return 0;
+					}
+				}
+			}		
+		}
+	}
+*/
 	// Q1
 	fprintf(fp,"; Q1\n") ;
 	fprintf(fp,"(assert (and ") ;
@@ -79,24 +131,25 @@ main ()
 	fprintf(fp,"))\n") ;
 
 	//Q3
+	int v=0;
 	fprintf(fp,"; Q3\n") ;
 	fprintf(fp,"(assert (and ") ;
 	for(int i=0; i<9; i++){
                 for(int j=0; j<9; j++){
                         if(isdigit(Q3[i][j])){
                                fprintf(fp,"(and p%d%d%d)", i+1,j+1,Q3[i][j]-48);
-			      // printf("[DEBUG] p%d%d%d)", i+1, j+1, Q3[i][j]-48);
+			       v++;
+			       // printf("[DEBUG] p%d%d%d)", i+1, j+1, Q3[i][j]-48);
                         }
                 }
         }
 	fprintf(fp,"))\n") ;
 
-/*	if(v<=16){
-		printf("v:%d\n",v);
-		printf("invalid\n");
+	if(v<=16){
+		printf("Invalid\n");
 		return 0;
 	}
-*/
+
 	
 	//Q4
 	fprintf(fp,"; Q4\n") ;

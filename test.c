@@ -2,21 +2,25 @@
 #include <ctype.h>
 
 int main(){
-	char Q3[9][9];	
+	int size;
+	scanf("%d", &size);
+	char buf[128];
+	char con[size][size];	
+	scanf("%c", buf);	
 
-	for(int i=0; i<9; i++){
-                for(int j=0; j<9; j++){
-                        scanf("%c ", &Q3[i][j]);
+	for(int i=0; i<4; i++){
+                for(int j=0; j<size; j++){
+                        scanf("%c ", &con[i][j]);
                 }
         }
 	
-	for(int i=0; i<9; i++){
-                for(int j=0; j<9; j++){
-                        printf("%c", Q3[i][j]);
+	for(int i=0; i<4; i++){
+                for(int j=0; j<size; j++){
+                        printf("%c ", con[i][j]);
                 }
 		printf("\n");
         }
-
+/*
 	for(int i=0; i<9; i++){
                 for(int j=0; j<9; j++){
                         if(isdigit(Q3[i][j])){
@@ -25,5 +29,6 @@ int main(){
                 }
 		printf("\n");
         }
+*/
 	return 0;
 }
