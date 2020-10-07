@@ -5,4 +5,5 @@ a.out
 *.swl
 *.swm
 *.swn
-.gitignore
+*.o
+*.exe
