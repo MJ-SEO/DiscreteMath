@@ -54,7 +54,9 @@ intset_size (intset * s)
  * returns the number of elements contained in s.
  */
 {
-	/* TODO*/
+	int n;
+	n = s->n_elems;
+	return n;
 }
 
 int
@@ -66,7 +68,18 @@ intset_add (intset * s, int e)
  * hint: use realloc. note that s->elems is NULL when it has no element.
  */
 {
-	/* TODO*/
+	for(int i=0; i < s->n_elems; i++){
+		if(s->elems[i] == e){
+			printf("[DEBUG] ADD %d,  %d는 중복입니다.\n",e,e);
+			return 1;
+		}
+	}
+
+	s->elems = (int *) realloc(s->elems, s->n_elems+1);
+	s->elems[s->n_elems] = e;
+	s->n_elems += 1;
+	printf("[DEBUG] ADD %d\n", e);
+	return 0;
 }
 
 int
@@ -79,8 +92,22 @@ intset_remove (intset * s, int e)
  *
  * hint: use realloc.
  */
-{
-	/* TODO*/
+{	
+	for(int i=0; i < s->n_elems; i++){
+		if(s->elems[i] == e){
+			printf("[DEBUG] remove %d\n", e);
+			s->elems = (int *) realloc(s->elems, s->n_elems);
+			s->elems[i] = s->elems[s->n_elems-1];
+			s->n_elems -= 1;			
+			if(s->n_elems == 0){
+				s->elems = 0x0;
+			}
+			return 0;
+		}
+	}
+
+	printf("[DEBUG] %d는 존재하지 않습니다.\n", e);	
+	return 1;
 }
 
 
@@ -90,7 +117,15 @@ intset_contains (intset * s, int e)
  * return 1 if e is contained in s. return 0 otherwise.
  */
 {
-	/* TODO*/
+	for(int i=0; i < s->n_elems; i++){
+		if(s->elems[i] == e){
+			printf("[DEBUG] %d is in set\n", e);
+			return 1;
+		}
+	}
+	
+	printf("[DEBUG] %d is not in set\n", e);
+	return 0;
 }
 
 
@@ -101,7 +136,30 @@ intset_equals (intset *s1, intset *s2)
  * return 0 otherwise.
  */
 {
-	/* TODO*/
+	if(s1->n_elems != s2->n_elems){
+		printf("두 set은 다름,(크기)\n");
+		return 0;
+	}
+
+	int a=0, b=0;
+
+	for(int i=0; i< s1->n_elems; i++){
+		for(int j=0; j< s2->n_elems; j++){
+			if(s1->elems[i] == s2->elems[j]){
+				a++;
+				break;
+			}
+		}
+	}
+	
+	if(a == s1->n_elems && a == s2->n_elems){
+		printf("두 set은 같음\n");
+		return 1;
+	}
+	else{
+		printf("두 set은 다름(구성)\n");
+		return 0;
+	}
 }
 
 
@@ -114,7 +172,18 @@ intset_union (intset *s1, intset *s2)
  * return NULL if the operation fails.
  */
 {
-	/* TODO*/
+	if(s1->n_elems == 0 && s2->n_elems == 0){
+		return 0x0;
+	}	
+
+	intset *s3 = intset_alloc(); 
+	for(int i=0; i< s1->n_elems; i++){
+		intset_add(s3, s1->elems[i]);
+	}
+	for(int i=0; i< s2->n_elems; i++){
+		intset_add(s3, s2->elems[i]);
+	}
+	return s3;
 }
 
 
@@ -127,7 +196,18 @@ intset_intersection (intset *s1, intset *s2)
  * return NULL if the operation fails.
  */
 {
-	/* TODO*/
+
+	intset *s3 = intset_alloc(); 
+	intset *s4 = intset_alloc();	
+	for(int i=0; i< s1->n_elems; i++){
+		intset_add(s3, s1->elems[i]);
+	}
+	for(int i=0; i< s2->n_elems; i++){
+		if(intset_add(s3, s2->elems[i])==1){
+			intset_add(s4, s2->elems[i]);
+		}
+	}
+	return s4;	
 }
 
 
@@ -140,7 +220,18 @@ intset_difference (intset *s1, intset *s2)
  * return NULL if the operation fails.
  */
 {
-	/* TODO*/
+	intset *s3 = intset_alloc();	
+	intset *s4 = intset_alloc();
+	for(int i=0; i< s1->n_elems; i++){
+		intset_add(s3, s1->elems[i]);
+		intset_add(s4, s1->elems[i]);
+	}
+	for(int i=0; i< s2->n_elems; i++){
+		if(intset_add(s3, s2->elems[i])==1){
+			intset_remove(s4, s2->elems[i]);
+		}
+	}
+	return s4;
 }
 
 
