@@ -121,8 +121,8 @@ intset_contains (intset * s, int e)
 		}
 	}
 	
-	printf("[DEBUG] %d는 존재하지 않습니다.\n", e);
-	return 1;
+	printf("[DEBUG] %d is not is set.\n", e);
+	return 0;
 	
 }
 
@@ -181,20 +181,31 @@ intset_union (intset *s1, intset *s2)
  */
 {
 
+	if(s1->n_univ != s2->n_univ){
+		printf("두 set은 다름(U의 크기)\n");
+		return 0x0;
+	}
+	
 	for(int i=0; i < s1->n_univ; i++){
 		if(s1->univ[i] != s2->univ[i]){
 			printf("두 set은 다름(U의 구성)\n");
 			return 0x0;
 		}
 	}
+	
+	intset *s3 = intset_alloc(s1->univ, s1->n_univ); 
+	
+	for(int i=0; i< s1->n_univ; i++){		
+		if(s1->bitvect[i] == s2->bitvect[i] && s1->bitvect[i] == 1){
+			s3->n_elems +=1;			
+//			printf("DEBUG: i: %d, s3 elems: %zd\n", i ,s3->n_elems); 		
+		}
+		s3->bitvect[i] = s1->bitvect[i] | s2->bitvect[i];
+	}
+//	printf("DEBUG: 기존 s3의 크기(교집합): %zd\n", s3->n_elems); 
+	s3->n_elems = s1->n_elems + s2->n_elems - s3->n_elems;	
 
-	intset *s3 = intset_alloc(); 
-	for(int i=0; i< s1->n_elems; i++){
-		intset_add(s3, s1->elems[i]);
-	}
-	for(int i=0; i< s2->n_elems; i++){
-		intset_add(s3, s2->elems[i]);
-	}
+//	printf("DEBUG: 이후 s3의 크기(합집합 - 교집합): %zd\n", s3->n_elems); 
 	return s3;
 }
 
@@ -209,7 +220,27 @@ intset_intersection (intset *s1, intset *s2)
  * intersection operation fails if their univ fields are not the same.
  */
 {
-	/* TODO*/
+	if(s1->n_univ != s2->n_univ){
+		printf("두 set은 다름(U의 크기)\n");
+		return 0x0;
+	}
+	
+	for(int i=0; i < s1->n_univ; i++){
+		if(s1->univ[i] != s2->univ[i]){
+			printf("두 set은 다름(U의 구성)\n");
+			return 0x0;
+		}
+	}
+	
+	intset *s3 = intset_alloc(s1->univ, s1->n_univ); 
+	
+	for(int i=0; i< s1->n_univ; i++){
+		if(s1->bitvect[i] == s2->bitvect[i] && s1->bitvect[i] == 1){
+			s3->n_elems +=1;
+		}
+		s3->bitvect[i] = s1->bitvect[i] & s2->bitvect[i];
+	}
+	return s3;
 }
 
 
@@ -223,7 +254,36 @@ intset_difference (intset *s1, intset *s2)
  * set difference operation fails if their univ fields are not the same.
  */
 {
-	/* TODO*/
+	
+	if(s1->n_univ != s2->n_univ){
+		printf("두 set은 다름(U의 크기)\n");
+		return 0x0;
+	}
+	
+	for(int i=0; i < s1->n_univ; i++){
+		if(s1->univ[i] != s2->univ[i]){
+			printf("두 set은 다름(U의 구성)\n");
+			return 0x0;
+		}
+	}
+	intset *s3 = intset_alloc(s1->univ, s1->n_univ); 
+	intset *s4 = intset_alloc(s1->univ, s1->n_univ); 
+
+	s4 = intset_union(s1,s4);
+
+	for(int i=0; i< s1->n_univ; i++){
+		s3->bitvect[i] = s1->bitvect[i] & s2->bitvect[i];
+	}
+
+	for(int i=0; i< s1->n_univ; i++){
+		if(s1->bitvect[i] == 1 && s3->bitvect[i] == 1){
+			printf("i: %d\n", i);
+			s4->bitvect[i] = 0;
+			s4->n_elems -= 1;
+		}
+	}
+	
+	return s4;
 }
 
 
