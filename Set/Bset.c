@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "intset.h"
+#include "Bset.h"
 
 intset *
 intset_alloc (int * univ, size_t n_univ) 
@@ -15,6 +15,7 @@ intset_alloc (int * univ, size_t n_univ)
 	size_t bitvect_len = n_univ / 8 + (n_univ % 8) ? 1 : 0 ;
 
 	s->bitvect = (unsigned char *) malloc(bitvect_len) ;
+	printf("DUBUG bitvect_len: %zd\n", bitvect_len);
 	memset(s->bitvect, 0, bitvect_len) ;
 	s->n_elems = 0 ;
 	return s ;
@@ -61,7 +62,7 @@ intset_size (intset * s)
  * returns the number of elements contained in s.
  */
 {
-	/* TODO*/
+	return s->n_elems;
 }
 
 int
@@ -69,10 +70,20 @@ intset_add (intset * s, int e)
 /*
  * insert a new integer value e to s.
  * return 0 if succeeded. return 1 if it fails.
- * 
  */
 {
-	/* TODO*/
+	for(int i=0; i<s->n_univ; i++){
+		if(s->univ[i] == e){
+			if(s->bitvect[i] == 1){
+				printf("[DEBUG] ADD %d,  %d는 중복입니다.\n",e,e);
+				return 1;
+			}
+			s->bitvect[i] = 1;
+			printf("[DEBUG] ADD %d\n", e);	
+			s->n_elems +=1;
+			return 0;
+		}
+	}
 }
 
 int
@@ -83,7 +94,17 @@ intset_remove (intset * s, int e)
  *
  */
 {
-	/* TODO*/
+	for(int i=0; i< s->n_univ; i++){
+		if(s->bitvect[i] == 1 && s->univ[i] == e){
+			printf("[DEBUG] remove %d\n", e);
+			s->bitvect[i] = 0;
+			s->n_elems -= 1;
+			return 0;
+		}
+	}
+	
+	printf("[DEBUG] %d는 존재하지 않습니다.\n", e);
+	return 1;
 }
 
 
@@ -93,7 +114,16 @@ intset_contains (intset * s, int e)
  * return 1 if e is contained in s. return 0 otherwise.
  */
 {
-	/* TODO*/
+	for(int i=0; i< s->n_univ; i++){
+		if(s->bitvect[i] == 1 && s->univ[i] == e){
+			printf("[DEBUG] %d is in set\n", e);
+			return 1;
+		}
+	}
+	
+	printf("[DEBUG] %d는 존재하지 않습니다.\n", e);
+	return 1;
+	
 }
 
 
@@ -106,7 +136,37 @@ intset_equals (intset *s1, intset *s2)
  * two sets are not equivalent if their univ fields are not the same.
  */
 {
-	/* TODO*/
+	if(s1->n_univ != s2->n_univ){
+		printf("두 set은 다름(U의 크기)\n");
+		return 0;
+	}
+
+	for(int i=0; i < s1->n_univ; i++){
+		if(s1->univ[i] != s2->univ[i]){
+			printf("두 set은 다름(U의 구성)\n");
+			return 0;
+		}
+	}
+	
+	int a=0;
+
+	for(int i=0; i< s1->n_univ; i++){
+		for(int j=0; j< s2->n_univ; j++){
+			if(s1->bitvect[i] == s2->bitvect[j]){
+				a++;
+				break;
+			}
+		}
+	}
+	
+	if(a == s1->n_elems && a == s2->n_elems){
+		printf("두 set은 같음\n");
+		return 1;
+	}
+	else{
+		printf("두 set은 다름(구성)\n");
+		return 0;
+	}
 }
 
 
@@ -120,7 +180,22 @@ intset_union (intset *s1, intset *s2)
  * union operation fails if their univ fields are not the same.
  */
 {
-	/* TODO*/
+
+	for(int i=0; i < s1->n_univ; i++){
+		if(s1->univ[i] != s2->univ[i]){
+			printf("두 set은 다름(U의 구성)\n");
+			return 0x0;
+		}
+	}
+
+	intset *s3 = intset_alloc(); 
+	for(int i=0; i< s1->n_elems; i++){
+		intset_add(s3, s1->elems[i]);
+	}
+	for(int i=0; i< s2->n_elems; i++){
+		intset_add(s3, s2->elems[i]);
+	}
+	return s3;
 }
 
 
