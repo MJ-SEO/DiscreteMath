@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Bset.h"
+#include "intset.h"
 
 intset *
 intset_alloc (int * univ, size_t n_univ) 
@@ -15,7 +15,7 @@ intset_alloc (int * univ, size_t n_univ)
 	size_t bitvect_len = n_univ / 8 + (n_univ % 8) ? 1 : 0 ;
 
 	s->bitvect = (unsigned char *) malloc(bitvect_len) ;
-	printf("DUBUG bitvect_len: %zd\n", bitvect_len);
+//	printf("DUBUG bitvect_len: %zd\n", bitvect_len);
 	memset(s->bitvect, 0, bitvect_len) ;
 	s->n_elems = 0 ;
 	return s ;
@@ -123,7 +123,6 @@ intset_contains (intset * s, int e)
 	
 	printf("[DEBUG] %d is not is set.\n", e);
 	return 0;
-	
 }
 
 
@@ -299,7 +298,7 @@ intset_subsets (intset * s, size_t k , size_t * n_subsets)
  * return NULL if the operation fails.
  */
 {
-	/* TODO*/
+
 }
 
 
@@ -315,5 +314,5 @@ intset_powerset (intset * s, size_t * n_subsets)
  * return NULL if the operation fails.
 */
 {
-	/* TODO*/
+
 }

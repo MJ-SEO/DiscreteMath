@@ -70,7 +70,7 @@ intset_add (intset * s, int e)
 {
 	for(int i=0; i < s->n_elems; i++){
 		if(s->elems[i] == e){
-			printf("[DEBUG] ADD %d,  %d는 중복입니다.\n",e,e);
+//			printf("[DEBUG] ADD %d,  %d는 중복입니다.\n",e,e);
 			return 1;
 		}
 	}
@@ -80,6 +80,7 @@ intset_add (intset * s, int e)
 	s->n_elems += 1;
 	printf("[DEBUG] ADD %d\n", e);
 	return 0;
+
 }
 
 int
@@ -95,7 +96,7 @@ intset_remove (intset * s, int e)
 {	
 	for(int i=0; i < s->n_elems; i++){
 		if(s->elems[i] == e){
-			printf("[DEBUG] remove %d\n", e);
+//			printf("[DEBUG] remove %d\n", e);
 			s->elems = (int *) realloc(s->elems, s->n_elems);
 			s->elems[i] = s->elems[s->n_elems-1];
 			s->n_elems -= 1;			
@@ -106,7 +107,7 @@ intset_remove (intset * s, int e)
 		}
 	}
 
-	printf("[DEBUG] %d는 존재하지 않습니다.\n", e);	
+//	printf("[DEBUG] %d는 존재하지 않습니다.\n", e);	
 	return 1;
 }
 
@@ -119,12 +120,12 @@ intset_contains (intset * s, int e)
 {
 	for(int i=0; i < s->n_elems; i++){
 		if(s->elems[i] == e){
-			printf("[DEBUG] %d is in set\n", e);
+//			printf("[DEBUG] %d is in set\n", e);
 			return 1;
 		}
 	}
 	
-	printf("[DEBUG] %d is not in set\n", e);
+//	printf("[DEBUG] %d is not in set\n", e);
 	return 0;
 }
 
@@ -137,7 +138,7 @@ intset_equals (intset *s1, intset *s2)
  */
 {
 	if(s1->n_elems != s2->n_elems){
-		printf("두 set은 다름,(크기)\n");
+//		printf("두 set은 다름,(크기)\n");
 		return 0;
 	}
 
@@ -153,11 +154,11 @@ intset_equals (intset *s1, intset *s2)
 	}
 	
 	if(a == s1->n_elems && a == s2->n_elems){
-		printf("두 set은 같음\n");
+//		printf("두 set은 같음\n");
 		return 1;
 	}
 	else{
-		printf("두 set은 다름(구성)\n");
+//		printf("두 set은 다름(구성)\n");
 		return 0;
 	}
 }
@@ -197,11 +198,12 @@ intset_intersection (intset *s1, intset *s2)
  */
 {
 
-	intset *s3 = intset_alloc(); 
+	intset *s3 = intset_clone(s1); 
 	intset *s4 = intset_alloc();	
-	for(int i=0; i< s1->n_elems; i++){
+/*	for(int i=0; i< s1->n_elems; i++){
 		intset_add(s3, s1->elems[i]);
 	}
+*/
 	for(int i=0; i< s2->n_elems; i++){
 		if(intset_add(s3, s2->elems[i])==1){
 			intset_add(s4, s2->elems[i]);
@@ -220,12 +222,13 @@ intset_difference (intset *s1, intset *s2)
  * return NULL if the operation fails.
  */
 {
-	intset *s3 = intset_alloc();	
-	intset *s4 = intset_alloc();
-	for(int i=0; i< s1->n_elems; i++){
+	intset *s3 = intset_clone(s1);	
+	intset *s4 = intset_clone(s1);
+/*	for(int i=0; i< s1->n_elems; i++){
 		intset_add(s3, s1->elems[i]);
 		intset_add(s4, s1->elems[i]);
-	}
+	} */
+
 	for(int i=0; i< s2->n_elems; i++){
 		if(intset_add(s3, s2->elems[i])==1){
 			intset_remove(s4, s2->elems[i]);
@@ -247,9 +250,31 @@ intset_subsets (intset * s, size_t k , size_t * n_subsets)
  * return NULL if the operation fails.
  */
 {
-	/* TODO*/
-}
+	intset **subsets = (intset **) malloc(sizeof(intset*)*500);	
+	intset *subset = intset_clone(s);
+	int cnt = subset->n_elems;
+	
+	if(cnt == k){
+		*n_subsets = 1;
+		subsets[0] = subset;
+		return subsets;
+	}
+	
+	if(k == 0){		
+		subsets[0] = intset_alloc();
+		return subsets;
+	}
 
+	if(k == 1){
+		for(int i=0; i <s->n_elems; i++){
+			subsets[i] = intset_alloc();
+			intset_add(subsets[i], s->elems[i]);
+			*n_subsets = i+1;
+		}
+	}
+
+	return subsets;
+}
 
 intset ** 
 intset_powerset (intset * s, size_t * n_subsets) 

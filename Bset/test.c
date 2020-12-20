@@ -69,8 +69,9 @@ test2 ()
 int
 main ()
 {
-//	test1() ;
-	test2() ;
 
-	printf("Pass\n") ;
+	test2();
+        printf("Pass test2\n");
+        test1();
+        printf("Pass test1\n");
 }
